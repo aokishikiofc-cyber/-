@@ -1,0 +1,1110 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Champions Selector">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#08111f">
+<title>Pokémon Champions Selector COMPLETE v7.5.2</title>
+<style>
+:root{--bg:#070b14;--panel:#101a2b;--panel2:#17243a;--line:#2b3b5a;--txt:#f4f7ff;--muted:#9eacc5;--a:#5bd8ff;--g:#58e39b;--y:#ffd166;--r:#ff718d}
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:radial-gradient(circle at 50% -10%,#18385f,#070b14 48%);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP",sans-serif}
+main{max-width:1080px;margin:auto;padding:16px 13px calc(50px + env(safe-area-inset-bottom))}
+h1{font-size:22px;margin:0}.sub,.small{font-size:12px;color:var(--muted);line-height:1.55}.card{background:#101a2bf5;border:1px solid var(--line);border-radius:18px;padding:14px;margin:12px 0;box-shadow:0 12px 35px #0005}h2{font-size:16px;margin:0 0 10px}
+.tabs,.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}button{padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);color:var(--txt);font-weight:800;font:inherit;min-height:44px}.active,.primary{background:linear-gradient(135deg,#11749c,#2c4f9f);border-color:var(--a)}
+label{font-size:11px;color:var(--muted)}select,input{display:block;width:100%;margin-top:5px;padding:11px;border:1px solid var(--line);border-radius:11px;background:#09111f;color:var(--txt);font-size:16px}
+.status{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.pill{padding:5px 8px;border-radius:999px;background:#23334e;font-size:11px}.ok{color:var(--g)}.warn{color:var(--y)}.bad{color:var(--r)}.hidden{display:none!important}
+.poke-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.poke-slot{min-width:0;min-height:126px;padding:7px;border:1px solid var(--line);border-radius:14px;background:#0b1322;color:var(--txt);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}.poke-slot img{width:74px;height:74px;object-fit:contain}.slot-no{align-self:flex-start;font-size:10px;color:var(--muted)}.poke-name{font-size:11px;font-weight:800;line-height:1.25;text-align:center;min-height:28px}
+.selector{position:fixed;inset:0;background:#02050be6;z-index:1000;display:none;align-items:flex-end;justify-content:center}.selector.open{display:flex}.sheet{width:100%;max-width:900px;max-height:90vh;background:#0e1727;border:1px solid var(--line);border-radius:20px 20px 0 0;padding:12px;display:flex;flex-direction:column}.selector-head{display:flex;gap:8px}.selector-head input{margin:0;flex:1}.selector-head button{padding:10px 13px}.selector-meta{font-size:11px;color:var(--muted);margin:8px 2px}.poke-grid{overflow:auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;padding-bottom:calc(12px + env(safe-area-inset-bottom))}.poke-card{min-width:0;padding:6px;border:1px solid var(--line);border-radius:13px;background:#111d31;color:var(--txt);display:flex;flex-direction:column;align-items:center;gap:3px;min-height:116px}.poke-card img{width:68px;height:68px;object-fit:contain}.poke-card b{font-size:10.5px;text-align:center;line-height:1.2}.poke-card small{font-size:9px;color:var(--muted);text-align:center}.poke-card.selected{outline:2px solid #5bd8ff77;border-color:var(--a)}
+.rank{display:grid;gap:9px;margin-top:10px}.r{background:#0b1322;border:1px solid var(--line);border-radius:14px;padding:12px}.rh{display:flex;justify-content:space-between;gap:8px}.rn{font-weight:900}.rs{font-size:22px;font-weight:900;color:var(--g)}.bar{height:7px;background:#263651;border-radius:10px;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:var(--a)}.score{font-size:38px;font-weight:900;color:var(--g)}.notice{padding:10px;border-radius:12px;background:#19263d;font-size:12px;line-height:1.55;margin-top:9px}details{margin-top:12px}summary{color:var(--a);font-weight:800;cursor:pointer}
+table{width:100%;border-collapse:collapse;font-size:11px;display:block;overflow:auto}th,td{padding:7px 5px;border-bottom:1px solid var(--line);white-space:nowrap;text-align:left}th{color:var(--muted)}.toast{position:fixed;left:12px;right:12px;bottom:14px;background:#17243af2;border:1px solid var(--line);padding:12px;border-radius:12px;text-align:center;display:none;z-index:1500}
+
+.team-save-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}
+.team-list{display:grid;gap:8px;margin-top:10px}
+.team-entry{display:grid;grid-template-columns:1fr auto auto auto;gap:6px;align-items:center;background:#0b1322;border:1px solid var(--line);border-radius:12px;padding:8px}
+.team-entry b{font-size:12px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.team-entry button{padding:8px 10px;min-height:38px;font-size:12px}
+@media(max-width:520px){.team-entry{grid-template-columns:1fr 1fr 1fr}.team-entry b{grid-column:1/-1}.team-save-row{grid-template-columns:1fr}}
+
+
+.build-editor{display:grid;gap:10px;margin-top:10px}
+.build-card{background:#0b1322;border:1px solid var(--line);border-radius:14px;padding:10px}
+.build-card h3{font-size:13px;margin:0 0 8px}
+.build-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.build-grid label{font-size:10px}
+.build-grid select,.build-grid input{font-size:14px;padding:9px}
+.sp-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.sp-total{font-size:11px;margin-top:6px}
+@media(min-width:720px){.build-grid{grid-template-columns:repeat(4,1fr)}.sp-row{grid-template-columns:repeat(6,1fr)}}
+
+
+.enemy-filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.enemy-filters.hidden-filter{display:none}
+.tier-badge{font-size:9px;font-weight:800;padding:2px 6px;border-radius:999px;background:#253650}
+.tier1{color:#ffd76a}.tier2{color:#87e6ff}.tier3{color:#9ee6a7}.tier4{color:#c7b6ff}.tier0{color:var(--muted)}
+
+
+.sync-progress{margin-top:10px}
+.progress-track{height:12px;background:#23334e;border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+.progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#2c4f9f,#5bd8ff);transition:width .22s ease}
+.progress-row{display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:11px;color:var(--muted)}
+.progress-current{font-weight:800;color:var(--txt);margin-top:4px}
+
+@media(min-width:560px){.poke-grid{grid-template-columns:repeat(5,minmax(0,1fr))}.poke-slots{grid-template-columns:repeat(6,1fr)}}@media(min-width:760px){.grid{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body><main>
+<h1>⚔️ Pokémon Champions Selector COMPLETE</h1><div id="appVersion" class="pill ok" style="display:inline-block;margin-top:8px">v7.5.2 CACHE RESET</div>
+<div class="sub">Regulation M-B対応設計。画像タップ選択、シングル3体、ダブル4体＋先発、SP66、技・特性・持ち物・使用率・タイプ・素早さ・弱点補完を統合評価。自分側はメガ形態を選択可能、相手側はメガ形態を除外しGameWithのシングルTier順で表示します。相手選択ではタイプ絞り込みも利用できます。ポケモン名・技名・特性名・持ち物名は日本語表示を優先します。持ち物名はGameWithの持ち物一覧表記を基準に補完します。技名はGameWithの技一覧表記を基準に補正し、内部計算は英語IDを保持するため判定ロジックには影響しません。</div>
+
+<section class="card"><h2>① データ同期</h2>
+<div class="actions"><button id="syncBtn" class="primary" type="button">🔄 完全データ同期</button><button id="clearBtn" type="button">キャッシュ削除</button></div>
+<div id="status" class="status"></div>
+<div class="sync-progress">
+  <div class="progress-track"><div id="syncProgressBar" class="progress-bar"></div></div>
+  <div class="progress-row">
+    <span id="syncProgressText">待機中</span>
+    <span id="syncProgressPercent">0%</span>
+  </div>
+  <div id="syncCurrentTask" class="progress-current small">—</div>
+</div>
+<div id="syncLog" class="notice">初回は「完全データ同期」を押してください。319形態以上を解決できた場合のみ「完全対応」と表示します。<br><span class="small">基礎データ: otterlyclueless/pokemon-champions-data + Pokémon Showdown Champions</span></div>
+</section>
+
+<section class="card"><h2>② ルール</h2><div class="tabs"><button id="singleBtn" class="active" type="button">シングル｜6→3</button><button id="doubleBtn" type="button">ダブル｜6→4＋先発</button></div></section>
+<section class="card"><h2>③ 自分の6体</h2><div id="mine" class="poke-slots"></div></section>
+<section class="card">
+<h2>💾 自分のチーム保存</h2>
+<div class="team-save-row">
+<label>チーム名<input id="teamName" type="text" maxlength="30" placeholder="例：シングル対面構築"></label>
+<button id="saveTeamBtn" class="primary" type="button">この6体を保存</button>
+</div>
+<div id="teamList" class="team-list"></div>
+<div class="small" style="margin-top:8px">保存先はこのブラウザ内です。チームはいくつでも登録できます。</div>
+</section>
+<section class="card">
+<h2>🧬 自分の6体の実戦データ</h2>
+<div class="small" style="margin-bottom:8px">各ポケモンのSP配分・技4つ・持ち物・特性を登録できます。SPは合計66、各能力32上限です。</div>
+<div id="buildEditor" class="build-editor"></div>
+</section>
+
+<section class="card"><h2>④ 相手の6体</h2><div class="small" style="margin-bottom:8px">相手側はメガ枠が不明なため、通常形態のみ選択できます。</div><div id="enemy" class="poke-slots"></div></section>
+
+<section class="card"><h2>⑤ 評価設定</h2><div class="grid">
+<label>戦術<select id="style"><option value="balanced">総合バランス</option><option value="safe">負け筋最小</option><option value="off">火力・対面</option><option value="speed">素早さ</option><option value="cycle">サイクル</option><option value="double">ダブル連携</option></select></label>
+<label>相手型<select id="risk"><option value="mix">期待値＋最悪ケース</option><option value="expected">採用率重視</option><option value="worst">最悪ケース重視</option></select></label>
+<label>メタ補正<select id="metaWeight"><option value="1">強く反映</option><option value=".6">標準</option><option value=".25">弱い</option><option value="0">なし</option></select></label>
+<label>天候<select id="weather"><option value="none">なし</option><option value="sun">晴れ</option><option value="rain">雨</option><option value="sand">砂</option><option value="snow">雪</option></select></label>
+</div></section>
+
+<div class="actions"><button id="judgeBtn" class="primary" type="button">🔥 選出判定</button><button id="resetBtn" type="button">6体をリセット</button></div>
+
+<section id="result" class="card hidden"><h2>判定結果</h2><div id="head"></div><div id="ranking" class="rank"></div>
+<details open><summary>トップ選出の分析</summary><div id="analysis"></div></details>
+<details><summary>相手の想定型</summary><div id="pred"></div></details>
+<details><summary>対面マトリクス</summary><div id="matrix"></div></details>
+</section>
+
+<section class="card"><h2>収録データ</h2><div id="counts" class="notice">未同期</div>
+<div class="small" style="margin-top:8px">Pokemon Champions Data (CC BY 4.0) と Pokémon Showdown の Champions データを統合。外部データが更新された場合は再同期してください。</div></section>
+</main>
+
+<div id="selector" class="selector" aria-hidden="true"><div class="sheet" role="dialog" aria-modal="true" aria-label="ポケモンを選択">
+<div class="selector-head"><input id="search" type="search" placeholder="名前で検索…" autocomplete="off"><button id="closeSelector" type="button">閉じる</button></div>
+<div id="enemyFilters" class="enemy-filters hidden-filter">
+<label>タイプ①<select id="typeFilter1"><option value="">すべて</option></select></label>
+<label>タイプ②<select id="typeFilter2"><option value="">指定なし</option></select></label>
+</div>
+<div id="selectorMeta" class="selector-meta"></div><div id="pokeGrid" class="poke-grid"></div></div></div>
+<div id="toast" class="toast"></div>
+
+<script>
+const U={
+ roster:"https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/main/pokemon/roster.json",
+ stats:"https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/main/pokemon/base-stats.json",
+ moves:"https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/main/moves/moves.json",
+ learn:"https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/main/learnsets/learnsets.json",
+ abilities:"https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/main/abilities/abilities.json",
+ items:"https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/main/items/items.json",
+ natures:"https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/main/natures/natures.json",
+ typechart:"https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/main/type-chart/type-chart.json",
+ version:"https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/main/meta/version.json",
+ dex:"https://raw.githubusercontent.com/smogon/pokemon-showdown/master/data/pokedex.ts",
+ champLearn:"https://raw.githubusercontent.com/smogon/pokemon-showdown/master/data/mods/champions/learnsets.ts",
+ singles:"https://eurekaffeine.github.io/pokemon-champions-scraper/singles/battle_meta.json",
+ doubles:"https://eurekaffeine.github.io/pokemon-champions-scraper/battle_meta.json",
+ pokeMoves:"https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv/moves.csv",
+ pokeMoveNames:"https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv/move_names.csv",
+ pokeAbilities:"https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv/abilities.csv",
+ pokeAbilityNames:"https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv/ability_names.csv",
+ pokeItems:"https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv/items.csv",
+ pokeItemNames:"https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv/item_names.csv",
+ pokeSpecies:"https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv/pokemon_species.csv",
+ pokeSpeciesNames:"https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv/pokemon_species_names.csv"
+};
+const TYPEJP={Normal:"ノーマル",Fire:"ほのお",Water:"みず",Electric:"でんき",Grass:"くさ",Ice:"こおり",Fighting:"かくとう",Poison:"どく",Ground:"じめん",Flying:"ひこう",Psychic:"エスパー",Bug:"むし",Rock:"いわ",Ghost:"ゴースト",Dragon:"ドラゴン",Dark:"あく",Steel:"はがね",Fairy:"フェアリー"};
+const TYPES=Object.keys(TYPEJP);
+
+const GAMEWITH_TIER_ORDER=[
+  // Tier 1 (メガ除外)
+  ["ガブリアス","カバルドン","ギルガルド","アシレーヌ","ミミッキュ","アーマーガア","イダイトウ♂","イダイトウ(オス)","マスカーニャ","ブリジュラス"],
+  // Tier 2 (メガ除外)
+  ["アローラキュウコン","ギャラドス","ブラッキー","ハッサム","ウォッシュロトム","ヒスイダイケンキ","サザンドラ","ゲッコウガ","ニンフィア","ドヒドイデ","ドラパルト","ソウブレイズ","ハラバリー","クエスパトラ","キラフロル","ドドゲザン","サーフゴー"],
+  // Tier 3 (メガ除外)
+  ["ピクシー","ゲンガー","カビゴン","カイリュー","バシャーモ","ラグラージ","ペリッパー","マンムー","ヒートロトム","ドリュウズ","エルフーン","バイバニラ","ウルガモス","オーロンゲ","ラウドボーン"],
+  // Tier 4 (メガ除外)
+  ["メタモン","マリルリ","バンギラス","サーナイト","ミロカロス","エンペルト","エルレイド","ペンドラー","ヒスイゾロアーク","ビビヨン","オニシズクモ","オオニューラ","ハリーマン","コノヨザル","ミミズズ"]
+];
+function normTierName(n){
+  return (n||"").replace(/[（）]/g,x=>x==="（"?"(":")").replace(/♀/g,"(メス)").replace(/♂/g,"(オス)").replace(/\s/g,"");
+}
+const GAMEWITH_TIER_MAP=(()=>{
+  const m={};
+  GAMEWITH_TIER_ORDER.forEach((list,ti)=>list.forEach((n,oi)=>m[normTierName(n)]={tier:ti+1,order:oi}));
+  return m;
+})();
+function gamewithTierInfo(p){
+  let n=normTierName(nameJP(p));
+  let x=GAMEWITH_TIER_MAP[n];
+  if(!x && /イダイトウ/.test(n) && /(オス|♂)/.test(nameJP(p)))x={tier:1,order:6};
+  return x||{tier:0,order:9999};
+}
+
+const CHART={Normal:{Rock:.5,Ghost:0,Steel:.5},Fire:{Fire:.5,Water:.5,Grass:2,Ice:2,Bug:2,Rock:.5,Dragon:.5,Steel:2},Water:{Fire:2,Water:.5,Grass:.5,Ground:2,Rock:2,Dragon:.5},Electric:{Water:2,Electric:.5,Grass:.5,Ground:0,Flying:2,Dragon:.5},Grass:{Fire:.5,Water:2,Grass:.5,Poison:.5,Ground:2,Flying:.5,Bug:.5,Rock:2,Dragon:.5,Steel:.5},Ice:{Fire:.5,Water:.5,Grass:2,Ice:.5,Ground:2,Flying:2,Dragon:2,Steel:.5},Fighting:{Normal:2,Ice:2,Poison:.5,Flying:.5,Psychic:.5,Bug:.5,Rock:2,Ghost:0,Dark:2,Steel:2,Fairy:.5},Poison:{Grass:2,Poison:.5,Ground:.5,Rock:.5,Ghost:.5,Steel:0,Fairy:2},Ground:{Fire:2,Electric:2,Grass:.5,Poison:2,Flying:0,Bug:.5,Rock:2,Steel:2},Flying:{Electric:.5,Grass:2,Fighting:2,Bug:2,Rock:.5,Steel:.5},Psychic:{Fighting:2,Poison:2,Psychic:.5,Dark:0,Steel:.5},Bug:{Fire:.5,Grass:2,Fighting:.5,Poison:.5,Flying:.5,Psychic:2,Ghost:.5,Dark:2,Steel:.5,Fairy:.5},Rock:{Fire:2,Ice:2,Fighting:.5,Ground:.5,Flying:2,Bug:2,Steel:.5},Ghost:{Normal:0,Psychic:2,Ghost:2,Dark:.5},Dragon:{Dragon:2,Steel:.5,Fairy:0},Dark:{Fighting:.5,Psychic:2,Ghost:2,Dark:.5,Fairy:.5},Steel:{Fire:.5,Water:.5,Electric:.5,Ice:2,Rock:2,Steel:.5,Fairy:2},Fairy:{Fire:.5,Fighting:2,Poison:.5,Dragon:2,Dark:2,Steel:.5}};
+const JP={"Venusaur":"フシギバナ","Charizard":"リザードン","Blastoise":"カメックス","Gengar":"ゲンガー","Gyarados":"ギャラドス","Dragonite":"カイリュー","Scizor":"ハッサム","Tyranitar":"バンギラス","Blaziken":"バシャーモ","Swampert":"ラグラージ","Gardevoir":"サーナイト","Metagross":"メタグロス","Garchomp":"ガブリアス","Lucario":"ルカリオ","Excadrill":"ドリュウズ","Hydreigon":"サザンドラ","Aegislash":"ギルガルド","Greninja":"ゲッコウガ","Primarina":"アシレーヌ","Mimikyu":"ミミッキュ","Corviknight":"アーマーガア","Basculegion":"イダイトウ","Meowscarada":"マスカーニャ","Gholdengo":"サーフゴー","Archaludon":"ブリジュラス","Kingambit":"ドドゲザン","Dragapult":"ドラパルト","Skeledirge":"ラウドボーン","Volcarona":"ウルガモス","Toxapex":"ドヒドイデ","Hippowdon":"カバルドン","Pelipper":"ペリッパー","Amoonguss":"モロバレル","Grimmsnarl":"オーロンゲ","Annihilape":"コノヨザル","Overqwil":"ハリーマン","Eelektross":"シビルドン","Malamar":"カラマネロ","Dragalge":"ドラミドロ","Falinks":"タイレーツ","Pyroar":"カエンジシ","Scolipede":"ペンドラー","Scrafty":"ズルズキン","Barbaracle":"ガメノデス"};
+
+Object.assign(JP,{
+"Pikachu":"ピカチュウ","Raichu":"ライチュウ","Ninetales":"キュウコン","Alolan Ninetales":"アローラキュウコン",
+"Arcanine":"ウインディ","Machamp":"カイリキー","Slowbro":"ヤドラン","Slowking":"ヤドキング","Cloyster":"パルシェン",
+"Snorlax":"カビゴン","Zapdos":"サンダー","Moltres":"ファイヤー","Articuno":"フリーザー","Mew":"ミュウ",
+"Umbreon":"ブラッキー","Espeon":"エーフィ","Skarmory":"エアームド","Kingdra":"キングドラ","Heracross":"ヘラクロス",
+"Milotic":"ミロカロス","Salamence":"ボーマンダ","Latias":"ラティアス","Latios":"ラティオス","Rayquaza":"レックウザ",
+"Roserade":"ロズレイド","Weavile":"マニューラ","Magnezone":"ジバコイル","Gallade":"エルレイド","Froslass":"ユキメノコ",
+"Rotom-Heat":"ヒートロトム","Rotom-Mow":"カットロトム","Rotom-Frost":"フロストロトム","Rotom-Fan":"スピンロトム",
+"Serperior":"ジャローダ","Samurott":"ダイケンキ","Samurott-Hisui":"ヒスイダイケンキ","Chandelure":"シャンデラ",
+"Mienshao":"コジョンド","Braviary":"ウォーグル","Braviary-Hisui":"ヒスイウォーグル","Mandibuzz":"バルジーナ",
+"Goodra":"ヌメルゴン","Goodra-Hisui":"ヒスイヌメルゴン","Talonflame":"ファイアロー","Klefki":"クレッフィ",
+"Decidueye":"ジュナイパー","Decidueye-Hisui":"ヒスイジュナイパー","Incineroar":"ガオガエン","Kommo-o":"ジャラランガ",
+"Rillaboom":"ゴリランダー","Cinderace":"エースバーン","Inteleon":"インテレオン","Hatterene":"ブリムオン",
+"Indeedee":"イエッサン","Indeedee-F":"イエッサン♀","Duraludon":"ジュラルドン","Urshifu":"ウーラオス",
+"Urshifu-Rapid-Strike":"ウーラオス(れんげき)","Sneasler":"オオニューラ","Basculegion-F":"イダイトウ♀",
+"Clodsire":"ドオー","Bellibolt":"ハラバリー","Espathra":"クエスパトラ","Glimmora":"キラフロル",
+"Ceruledge":"ソウブレイズ","Armarouge":"グレンアルマ","Tinkaton":"デカヌチャン","Kilowattrel":"タイカイデン",
+"Farigiraf":"リキキリン","Dondozo":"ヘイラッシャ","Tatsugiri":"シャリタツ","Baxcalibur":"セグレイブ",
+"Flutter Mane":"ハバタクカミ","Iron Hands":"テツノカイナ","Iron Bundle":"テツノツツミ","Roaring Moon":"トドロクツキ"
+});
+
+let DATA=[],MOVES={},LEARN={},CHAMP_LEARN={},ABILITIES={},ITEMS={},NATURES={},META={s:{},d:{}},JA_MOVES={},JA_ABILITIES={},JA_ITEMS={},JA_SPECIES={},MODE="s";
+const TEAM={mine:Array(6).fill(null),enemy:Array(6).fill(null)};let TARGET={team:null,slot:null};
+function q(x){return document.getElementById(x)} function id(x){return (x||"").toLowerCase().replace(/[^a-z0-9]/g,"")}
+function toast(s){q("toast").textContent=s;q("toast").style.display="block";setTimeout(()=>q("toast").style.display="none",2200)}
+function status(a){q("status").innerHTML=a.map(x=>`<span class="pill ${x[1]||""}">${x[0]}</span>`).join("")}
+async function fetchWithTimeout(url, asText=false, timeout=12000){
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),timeout);
+  try{
+    const r=await fetch(url,{cache:"no-store",signal:controller.signal});
+    if(!r.ok)throw new Error(`HTTP ${r.status}`);
+    return asText?await r.text():await r.json();
+  } finally {
+    clearTimeout(timer);
+  }
+}
+async function json(u,timeout=12000){return fetchWithTimeout(u,false,timeout)}
+async function text(u,timeout=12000){return fetchWithTimeout(u,true,timeout)}
+function eff(t,ds){let x=1;for(const d of ds)x*=((CHART[t]||{})[d]??1);return x}
+function nameJP(p){return localizedPokemonName(p)}
+function spriteName(p){let n=(p.name||"").toLowerCase().replace(/[.’']/g,"").replace(/♀/g,"-f").replace(/♂/g,"-m").replace(/\s+/g,"-");if(n.startsWith("mega-"))n=n.slice(5)+"-mega";return n}
+function sprite(p){return `https://play.pokemonshowdown.com/sprites/gen5/${spriteName(p)}.png`}
+function fallbackSprite(p){return p.dex?`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.dex}.png`:""}
+function image(p){let f=fallbackSprite(p);return `<img src="${sprite(p)}" alt="${nameJP(p)}" loading="lazy" onerror="${f?`if(!this.dataset.f){this.dataset.f='1';this.src='${f}'}else{this.style.display='none'}`:`this.style.display='none'`}">`}
+function parseDex(t){
+  let out={}, re=/\n\t([a-z0-9]+):\s*\{([\s\S]*?)\n\t\},/g,m;
+  while((m=re.exec(t))){
+    let k=m[1],b=m[2],
+        nm=(b.match(/\n\t\tname:\s*"([^"]+)"/)||[])[1]||k,
+        bs=b.match(/baseStats:\s*\{\s*hp:\s*(\d+),\s*atk:\s*(\d+),\s*def:\s*(\d+),\s*spa:\s*(\d+),\s*spd:\s*(\d+),\s*spe:\s*(\d+)\s*\}/),
+        ty=b.match(/types:\s*\[([^\]]+)\]/),
+        base=(b.match(/baseSpecies:\s*"([^"]+)"/)||[])[1]||nm,
+        num=+(b.match(/\n\t\tnum:\s*(-?\d+)/)||[])[1]||0,
+        ab=b.match(/abilities:\s*\{([\s\S]*?)\}/);
+    if(!bs||!ty)continue;
+    let abilities=[];
+    if(ab){
+      let ar=/"(?:0|1|H|S)":\s*"([^"]+)"/g,am;
+      while((am=ar.exec(ab[1])))abilities.push(am[1]);
+      // Some Showdown TS uses numeric keys without quotes.
+      let ar2=/(?:^|,)\s*(?:0|1|H|S):\s*"([^"]+)"/g;
+      while((am=ar2.exec(ab[1])))abilities.push(am[1]);
+    }
+    out[k]={
+      key:k,name:nm,base,
+      types:ty[1].split(",").map(x=>x.replace(/["\s]/g,"")).filter(Boolean),
+      stats:bs.slice(1).map(Number),dex:num,
+      abilities:[...new Set(abilities)]
+    };
+  }
+  return out
+}
+function legalKeys(t){let s=new Set(),re=/\n\t([a-z0-9]+):\s*\{\s*\n\t\tlearnset:/g,m;while((m=re.exec(t)))s.add(m[1]);return s}
+
+
+function parseCSV(text){
+  const rows=[]; let row=[],field="",q=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(q){
+      if(c==='"' && text[i+1]==='"'){field+='"';i++}
+      else if(c==='"')q=false;
+      else field+=c;
+    }else{
+      if(c==='"')q=true;
+      else if(c===','){row.push(field);field=""}
+      else if(c==='\n'){row.push(field.replace(/\r$/,""));rows.push(row);row=[];field=""}
+      else field+=c;
+    }
+  }
+  if(field.length||row.length){row.push(field);rows.push(row)}
+  return rows;
+}
+function mapIdentifierToId(csvText){
+  const rows=parseCSV(csvText),head=rows.shift(),ii=head.indexOf("identifier"),idc=head.indexOf("id"),out={};
+  for(const r of rows)if(r[idc]&&r[ii])out[id(r[ii])]=r[idc];
+  return out;
+}
+function mapJapaneseNames(baseCsv,nameCsv,foreignKey){
+  const ident=mapIdentifierToId(baseCsv),rows=parseCSV(nameCsv),head=rows.shift(),
+        fk=head.indexOf(foreignKey),lang=head.indexOf("local_language_id"),name=head.indexOf("name"),
+        byId={};
+  // PokéAPI language 11 = Japanese (日本語). Language 1 is Japanese kana/romaji legacy.
+  for(const r of rows)if(r[lang]==="11"&&r[fk]&&r[name])byId[r[fk]]=r[name];
+  const out={};
+  for(const [k,v] of Object.entries(ident))if(byId[v])out[k]=byId[v];
+  return out;
+}
+
+function mapJapaneseSpecies(baseCsv,nameCsv){
+  const ident=mapIdentifierToId(baseCsv),rows=parseCSV(nameCsv),head=rows.shift(),
+        fk=head.indexOf("pokemon_species_id"),lang=head.indexOf("local_language_id"),name=head.indexOf("name"),
+        byId={};
+  for(const r of rows)if(r[lang]==="11"&&r[fk]&&r[name])byId[r[fk]]=r[name];
+  const out={};
+  for(const [k,v] of Object.entries(ident))if(byId[v])out[k]=byId[v];
+  return out;
+}
+function baseSpeciesJapanese(p){
+  const candidates=[p.base,p.baseSpecies,p.name].filter(Boolean);
+  for(const n of candidates){
+    let raw=id(n.replace(/-mega(-x|-y)?$/i,"").replace(/-hisui$/i,"").replace(/-alola$/i,"").replace(/-galar$/i,"").replace(/-paldea$/i,"").replace(/-f$/i,"").replace(/-m$/i,""));
+    if(JA_SPECIES[raw])return JA_SPECIES[raw];
+    if(JP[n])return JP[n];
+  }
+  return null;
+}
+function localizedPokemonName(p){
+  if(!p)return "";
+  const n=p.name||"", baseJa=baseSpeciesJapanese(p);
+  if(/mega/i.test(n)||/mega/i.test(p.form||"")){
+    let suffix=/-mega-x$/i.test(n)||/mega x$/i.test(n)?"X":/-mega-y$/i.test(n)||/mega y$/i.test(n)?"Y":"";
+    return baseJa?`メガ${baseJa}${suffix}`:(p.jpName||p.japaneseName||JP[n]||n);
+  }
+  if(/-hisui$/i.test(n))return baseJa?`ヒスイ${baseJa}`:(JP[n]||n);
+  if(/-alola$/i.test(n))return baseJa?`アローラ${baseJa}`:(JP[n]||n);
+  if(/-galar$/i.test(n))return baseJa?`ガラル${baseJa}`:(JP[n]||n);
+  if(/-paldea$/i.test(n))return baseJa?`パルデア${baseJa}`:(JP[n]||n);
+  if(/-f$/i.test(n)&&baseJa)return `${baseJa}♀`;
+  if(/-m$/i.test(n)&&baseJa)return `${baseJa}♂`;
+  return p.jpName||p.japaneseName||JA_SPECIES[id(n)]||JP[n]||baseJa||n;
+}
+
+
+const GAMEWITH_MOVE_JA={
+"darkestlariat":"DDラリアット",
+"gravapple":"Gのちから",
+"highhorsepower":"10まんばりき",
+"thunderbolt":"10まんボルト",
+"triplearrows":"3ぼんのや",
+"irontail":"アイアンテール",
+"earthquake":"じしん",
+"outrage":"げきりん",
+"dragonclaw":"ドラゴンクロー",
+"fireblast":"だいもんじ",
+"heatwave":"ねっぷう",
+"solarbeam":"ソーラービーム",
+"moonblast":"ムーンフォース",
+"hydropump":"ハイドロポンプ",
+"icebeam":"れいとうビーム",
+"shadowball":"シャドーボール",
+"makeitrain":"ゴールドラッシュ",
+"suckerpunch":"ふいうち",
+"playrough":"じゃれつく",
+"shadowsneak":"かげうち",
+"uturn":"とんぼがえり",
+"ironhead":"アイアンヘッド",
+"sludgebomb":"ヘドロばくだん",
+"protect":"まもる",
+"willowisp":"おにび",
+"stealthrock":"ステルスロック",
+"fakeout":"ねこだまし",
+"energyball":"エナジーボール",
+"grassknot":"くさむすび",
+"drainpunch":"ドレインパンチ",
+"scald":"ねっとう",
+"icywind":"こごえるかぜ",
+"trickroom":"トリックルーム"
+};
+
+function moveJP(n){
+  if(!n)return "";
+  return GAMEWITH_MOVE_JA[id(n)]||JA_MOVES[id(n)]||n;
+}
+function abilityJP(n){return n==="自動"?n:(JA_ABILITIES[id(n)]||n)}
+
+const GAMEWITH_ITEM_JA={
+"brightpowder":"ひかりのこな","whiteherb":"しろいハーブ","quickclaw":"せんせいのツメ",
+"mentalherb":"メンタルハーブ","kingsrock":"おうじゃのしるし","silverpowder":"ぎんのこな",
+"focusband":"きあいのハチマキ","scopelens":"ピントレンズ","metalcoat":"メタルコート",
+"leftovers":"たべのこし","softsand":"やわらかいすな","hardstone":"かたいいし",
+"miracleseed":"きせきのタネ","blackglasses":"くろいメガネ","blackbelt":"くろおび",
+"magnet":"じしゃく","mysticwater":"しんぴのしずく","sharpbeak":"するどいくちばし",
+"poisonbarb":"どくバリ","nevermeltice":"とけないこおり","spelltag":"のろいのおふだ",
+"twistedspoon":"まがったスプーン","charcoal":"もくたん","dragonfang":"りゅうのキバ",
+"silkscarf":"シルクのスカーフ","shellbell":"かいがらのすず","widelens":"こうかくレンズ",
+"choicescarf":"こだわりスカーフ","shedshell":"きれいなぬけがら","bigroot":"おおきなねっこ",
+"cheriberry":"クラボのみ","chestoberry":"カゴのみ","pechaberry":"モモンのみ",
+"rawstberry":"チーゴのみ","aspearberry":"ナナシのみ","chartiberry":"ヨロギのみ",
+"kasibberry":"カシブのみ","habanberry":"ハバンのみ","colburberry":"ナモのみ",
+"babiriberry":"リリバのみ","roseliberry":"ロゼルのみ","chilanberry":"ホズのみ",
+"fairyfeather":"ようせいのハネ","lightball":"でんきだま",
+
+"feraligatite":"オーダイルナイト","meganiumite":"メガニウムナイト","emboarite":"エンブオナイト",
+"beedrillite":"スピアナイト","ampharosite":"デンリュウナイト","barbaracite":"ガメノデスナイト",
+"starmite":"スターミナイト","victreebelite":"ウツボットナイト","altarianite":"チルタリスナイト",
+"banettite":"ジュペッタナイト","cameruptite":"バクーダナイト","mawilite":"クチートナイト",
+"absolite":"アブソルナイト","slowbronite":"ヤドランナイト","dragoniteite":"カイリュナイト",
+"dragonitite":"カイリュナイト","froslassite":"ユキメノコナイト","hawluchanite":"ルチャブルナイト",
+"tyranitarite":"バンギラスナイト","pidgeotite":"ピジョットナイト","manectite":"ライボルトナイト",
+"houndoominite":"ヘルガナイト","audinite":"タブンネナイト","lopunnite":"ミミロップナイト",
+"sablenite":"ヤミラミナイト","sharpedonite":"サメハダナイト","gyaradosite":"ギャラドスナイト",
+"lucarionite":"ルカリオナイト","heracronite":"ヘラクロスナイト","aerodactylite":"プテラナイト",
+"alakazite":"フーディナイト","drampanite":"ジジーロナイト","eelektrossite":"シビルドナイト",
+"glalitite":"オニゴーリナイト","pinsirite":"カイロスナイト","falinksite":"タイレーツナイト",
+"scolipedite":"ペンドラナイト","gardevoirite":"サーナイトナイト","galladite":"エルレイドナイト",
+"skarmorite":"エアームドナイト","clefablite":"ピクシナイト","dragalgite":"ドラミドナイト",
+"scraftite":"ズルズキナイト","pyroarite":"カエンジシナイト","malamarite":"カラマネナイト",
+"excadrillite":"ドリュウズナイト","chandelurite":"シャンデラナイト","aggronite":"ボスゴドラナイト",
+"metagrossite":"メタグロスナイト","gengarite":"ゲンガナイト","medichamite":"チャーレムナイト",
+"abomasite":"ユキノオナイト","scizorite":"ハッサムナイト","garchompite":"ガブリアスナイト",
+"steelixite":"ハガネールナイト","kangaskhanite":"ガルーラナイト","charizarditex":"リザードナイトX",
+"charizarditey":"リザードナイトY","blastoisinite":"カメックスナイト","venusaurite":"フシギバナイト",
+"greninjite":"ゲッコウガナイト","delphoxite":"マフォクシナイト","chesnaughtite":"ブリガロナイト",
+"floettite":"フラエッテナイト","raichunitex":"ライチュウナイトX","raichunitey":"ライチュウナイトY",
+"sceptilite":"ジュカインナイト","swampertite":"ラグラージナイト","blazikenite":"バシャーモナイト",
+"staraptorite":"ムクホークナイト","chimechoite":"チリーンナイト","crabominableite":"ケケンカニナイト",
+"scovillainite":"スコヴィラナイト","golurkite":"ゴルーグナイト","meowsticite":"ニャオニクスナイト"
+,
+"glimmorite":"キラフロルナイト","glimmoranite":"キラフロルナイト",
+"dragoninite":"カイリュナイト","chimechite":"チリーンナイト",
+"crabominite":"ケケンカニナイト","eelektrossnite":"シビルドナイト",
+"floettenite":"フラエッテナイト","raichunite":"ライチュウナイト",
+"raichunitex":"ライチュウナイトX","raichunitey":"ライチュウナイトY"
+};
+
+function levenshtein(a,b){
+  a=id(a);b=id(b);
+  const dp=Array.from({length:a.length+1},()=>Array(b.length+1).fill(0));
+  for(let i=0;i<=a.length;i++)dp[i][0]=i;
+  for(let j=0;j<=b.length;j++)dp[0][j]=j;
+  for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++){
+    dp[i][j]=Math.min(
+      dp[i-1][j]+1,
+      dp[i][j-1]+1,
+      dp[i-1][j-1]+(a[i-1]===b[j-1]?0:1)
+    );
+  }
+  return dp[a.length][b.length];
+}
+
+function allItemsArray(){
+  if(Array.isArray(ITEMS))return ITEMS;
+  return Object.values(ITEMS||{}).filter(x=>x&&typeof x==="object");
+}
+
+function megaStoneTargetFromDescription(itemName){
+  const want=id(itemName);
+  const obj=allItemsArray().find(x=>id(x.name||"")===want);
+  const d=obj?.description||"";
+  let m=d.match(/If held by an? ([A-Za-z0-9.' -]+), this item allows it to Mega Evolve/i);
+  if(!m)m=d.match(/If held by ([A-Za-z0-9.' -]+), this item allows it to Mega Evolve/i);
+  return m?m[1].trim():null;
+}
+
+function megaStoneTargetByName(itemName){
+  let raw=(itemName||"").trim();
+  let suffix="";
+  if(/\sX$/i.test(raw)){suffix="X";raw=raw.replace(/\sX$/i,"")}
+  if(/\sY$/i.test(raw)){suffix="Y";raw=raw.replace(/\sY$/i,"")}
+  let stem=id(raw).replace(/ite$/,"").replace(/inite$/,"in").replace(/nite$/,"n");
+
+  // Explicit irregular/new Champions stone spellings.
+  const special={
+    dragonin:"Dragonite",
+    chimech:"Chimecho",
+    crabomin:"Crabominable",
+    feraligatr:"Feraligatr",
+    meganium:"Meganium",
+    raichun:"Raichu",
+    floett:"Floette",
+    greninj:"Greninja",
+    delphox:"Delphox",
+    chesnaught:"Chesnaught",
+    golurk:"Golurk",
+    meowstic:"Meowstic",
+    scovillain:"Scovillain",
+    staraptor:"Staraptor",
+    eelektross:"Eelektross",
+    falinks:"Falinks",
+    dragalg:"Dragalge",
+    malamar:"Malamar",
+    pyroar:"Pyroar",
+    scraft:"Scrafty",
+    scoliped:"Scolipede",
+    skarmor:"Skarmory",
+    clefabl:"Clefable",
+    hawluchan:"Hawlucha",
+    drampan:"Drampa"
+  };
+  if(special[stem])return {name:special[stem],suffix};
+
+  const candidates=DATA.filter(p=>!isMega(p)).map(p=>p.name).filter(Boolean);
+  let best=null,dist=999;
+  for(const c of candidates){
+    const cid=id(c).replace(/hisui|alola|galar|paldea/g,"");
+    const d=levenshtein(stem,cid);
+    if(d<dist){dist=d;best=c}
+  }
+  return dist<=4&&best?{name:best,suffix}:null;
+}
+
+const GAMEWITH_MEGA_BY_POKEMON_JA={
+"Feraligatr":"オーダイルナイト","Meganium":"メガニウムナイト","Emboar":"エンブオナイト","Beedrill":"スピアナイト",
+"Ampharos":"デンリュウナイト","Barbaracle":"ガメノデスナイト","Starmie":"スターミナイト","Victreebel":"ウツボットナイト",
+"Altaria":"チルタリスナイト","Banette":"ジュペッタナイト","Camerupt":"バクーダナイト","Mawile":"クチートナイト",
+"Absol":"アブソルナイト","Slowbro":"ヤドランナイト","Dragonite":"カイリュナイト","Froslass":"ユキメノコナイト",
+"Hawlucha":"ルチャブルナイト","Tyranitar":"バンギラスナイト","Pidgeot":"ピジョットナイト","Manectric":"ライボルトナイト",
+"Houndoom":"ヘルガナイト","Audino":"タブンネナイト","Lopunny":"ミミロップナイト","Sableye":"ヤミラミナイト",
+"Sharpedo":"サメハダナイト","Gyarados":"ギャラドスナイト","Lucario":"ルカリオナイト","Heracross":"ヘラクロスナイト",
+"Aerodactyl":"プテラナイト","Alakazam":"フーディナイト","Drampa":"ジジーロナイト","Eelektross":"シビルドナイト",
+"Glalie":"オニゴーリナイト","Pinsir":"カイロスナイト","Falinks":"タイレーツナイト","Scolipede":"ペンドラナイト",
+"Gardevoir":"サーナイトナイト","Gallade":"エルレイドナイト","Skarmory":"エアームドナイト","Clefable":"ピクシナイト",
+"Dragalge":"ドラミドナイト","Scrafty":"ズルズキナイト","Pyroar":"カエンジシナイト","Malamar":"カラマネナイト",
+"Excadrill":"ドリュウズナイト","Chandelure":"シャンデラナイト","Aggron":"ボスゴドラナイト","Metagross":"メタグロスナイト",
+"Gengar":"ゲンガナイト","Medicham":"チャーレムナイト","Abomasnow":"ユキノオナイト","Scizor":"ハッサムナイト",
+"Garchomp":"ガブリアスナイト","Steelix":"ハガネールナイト","Kangaskhan":"ガルーラナイト","Blastoise":"カメックスナイト",
+"Venusaur":"フシギバナイト","Greninja":"ゲッコウガナイト","Delphox":"マフォクシナイト","Chesnaught":"ブリガロナイト",
+"Floette":"フラエッテナイト","Sceptile":"ジュカインナイト","Swampert":"ラグラージナイト","Blaziken":"バシャーモナイト",
+"Staraptor":"ムクホークナイト","Chimecho":"チリーンナイト","Crabominable":"ケケンカニナイト","Scovillain":"スコヴィラナイト",
+"Golurk":"ゴルーグナイト","Meowstic":"ニャオニクスナイト","Glimmora":"キラフロルナイト"
+};
+function megaStoneJP(n){
+  const key=id(n);
+  if(!/(ite|inite|nite)(x|y)?$/.test(key) && !/\s[XY]$/i.test(n||""))return null;
+
+  let target=megaStoneTargetFromDescription(n);
+  let suffix="";
+  if(/\sX$/i.test(n||""))suffix="X";
+  if(/\sY$/i.test(n||""))suffix="Y";
+
+  if(!target){
+    const hit=megaStoneTargetByName(n);
+    if(hit){target=hit.name;suffix=suffix||hit.suffix}
+  }
+  if(!target)return null;
+  if(target==="Charizard") return `リザードナイト${suffix||""}`;
+  if(target==="Raichu") return `ライチュウナイト${suffix||""}`;
+  if(GAMEWITH_MEGA_BY_POKEMON_JA[target]) return GAMEWITH_MEGA_BY_POKEMON_JA[target];
+
+  const p=DATA.find(x=>id(x.name)===id(target) && !isMega(x))
+       || DATA.find(x=>id(x.base)===id(target) && !isMega(x));
+  let jp=p?nameJP(p):(JA_SPECIES[id(target)]||JP[target]||target);
+
+  // GameWith-style special truncations.
+  const overrides={
+    "Charizard":"リザード",
+    "Blastoise":"カメックス",
+    "Venusaur":"フシギバナ",
+    "Gengar":"ゲンガー",
+    "Dragonite":"カイリュー",
+    "Floette":"フラエッテ",
+    "Raichu":"ライチュウ",
+    "Feraligatr":"オーダイル",
+    "Meganium":"メガニウム"
+  };
+  if(overrides[target])jp=overrides[target];
+
+  // Standard Japanese naming is generally "<Pokémon>ナイト".
+  return `${jp}ナイト${suffix}`;
+}
+
+function itemJP(n){
+  if(n==="自動"||!n)return n;
+  const k=id(n);
+  if(GAMEWITH_ITEM_JA[k])return GAMEWITH_ITEM_JA[k];
+  if(JA_ITEMS[k])return JA_ITEMS[k];
+
+  const mega=megaStoneJP(n);
+  if(mega)return mega;
+
+  return n;
+}
+
+function parseChampLearnsets(t){
+  let out={}, speciesRe=/\n\t([a-z0-9]+):\s*\{\s*\n\t\tlearnset:\s*\{([\s\S]*?)\n\t\t\},/g,m;
+  while((m=speciesRe.exec(t))){
+    let moves=[], mr=/\n\t\t\t([a-z0-9]+):/g,mm;
+    while((mm=mr.exec(m[2])))moves.push(mm[1]);
+    out[m[1]]=[...new Set(moves)];
+  }
+  return out;
+}
+
+function buildRoster(dex,legal,verified){
+ let map=new Map();
+ for(const p of verified){map.set(id(p.name)+(p.form&&p.form!=="Base"?id(p.form):""),p)}
+ let out=[];
+ for(const k of legal){let p=dex[k];if(!p)continue;let v=verified.find(x=>id(x.name)===id(p.name));out.push({...p,form:"Base",legalBase:k,jpName:v?.japaneseName||v?.jpName||v?.nameJa||v?.name_ja||null,abilities:(p.abilities&&p.abilities.length?p.abilities:Object.values(v?.abilities||{}).filter(Boolean))})}
+ for(const p of Object.values(dex)){if(!/mega/i.test(p.name))continue;let bk=id(p.base);if(legal.has(bk)){let vb=verified.find(x=>id(x.name)===bk);let baseJa=vb?.japaneseName||vb?.jpName||vb?.nameJa||vb?.name_ja||JP[p.base]||null;let suffix=/Mega-X/.test(p.name)?"X":/Mega-Y/.test(p.name)?"Y":"";out.push({...p,form:"Mega",legalBase:bk,jpName:baseJa?("メガ"+baseJa+suffix):null,abilities:p.abilities||[]})}}
+ // supplement verified forms that the parser could not resolve
+ for(const v of verified){if(!out.some(x=>id(x.name)===id(v.name))){out.push({key:id(v.name),name:v.name,base:v.name,types:v.types||[],stats:[80,80,80,80,80,80],dex:v.dexNumber||0,form:v.form||"Base",legalBase:id(v.name),jpName:v.japaneseName||v.jpName||v.nameJa||v.name_ja||null,abilities:Object.values(v.abilities||{}).filter(Boolean)})}}
+ let seen=new Set();out=out.filter(p=>{let k=id(p.name);if(seen.has(k))return false;seen.add(k);return true});
+ return out;
+}
+function mergeStats(p,stats){let st=stats[id(p.name)]||stats[p.name];if(st)p.stats=[st.hp,st.atk,st.def,st.spa,st.spd,st.spe].map((x,i)=>+x||p.stats[i]);return p}
+function metaMap(x){let o={};(x?.pokemon_usage||[]).forEach(v=>o[id(v.name)]={rank:+v.rank||999,usage:+v.usage_rate||0});return o}
+
+function setSyncProgress(done,total,current,success=0,failed=0){
+  const pct=total?Math.max(0,Math.min(100,Math.round(done/total*100))):0;
+  const bar=q("syncProgressBar"),per=q("syncProgressPercent"),txt=q("syncProgressText"),cur=q("syncCurrentTask");
+  if(bar)bar.style.width=pct+"%";
+  if(per)per.textContent=pct+"%";
+  if(txt)txt.textContent=`完了 ${done} / ${total}｜成功 ${success}｜失敗/スキップ ${failed}`;
+  if(cur)cur.textContent=current||"—";
+}
+function resetSyncProgress(){setSyncProgress(0,1,"待機中",0,0)}
+async function sync(){
+  q("syncBtn").disabled=true;
+  const log=(msg)=>{q("syncLog").textContent=msg};
+  status([["同期開始","warn"]]);
+
+  const coreDefs=[
+    ["roster",U.roster,"json","ロスター"],
+    ["stats",U.stats,"json","種族値"],
+    ["moves",U.moves,"json","技データ"],
+    ["learn",U.learn,"json","学習技"],
+    ["abilities",U.abilities,"json","特性"],
+    ["items",U.items,"json","持ち物"]
+  ];
+  const legalDefs=[
+    ["dex",U.dex,"text","Showdown Dex"],
+    ["champLearn",U.champLearn,"text","Champions合法学習技"]
+  ];
+  const optionalDefs=[
+    ["singles",U.singles,"json","シングル使用率"],
+    ["doubles",U.doubles,"json","ダブル使用率"],
+    ["natures",U.natures,"json","性格"],
+    ["version",U.version,"json","データバージョン"],
+    ["pokeMoves",U.pokeMoves,"text","日本語 技ID"],
+    ["pokeMoveNames",U.pokeMoveNames,"text","日本語 技名"],
+    ["pokeAbilities",U.pokeAbilities,"text","日本語 特性ID"],
+    ["pokeAbilityNames",U.pokeAbilityNames,"text","日本語 特性名"],
+    ["pokeItems",U.pokeItems,"text","日本語 持ち物ID"],
+    ["pokeItemNames",U.pokeItemNames,"text","日本語 持ち物名"],
+    ["pokeSpecies",U.pokeSpecies,"text","日本語 ポケモンID"],
+    ["pokeSpeciesNames",U.pokeSpeciesNames,"text","日本語 ポケモン名"]
+  ].filter(([k])=>U[k]);
+
+  const total=coreDefs.length+legalDefs.length+optionalDefs.length+2;
+  let done=0,success=0,failed=0;
+  const g={};
+
+  try{
+    for(const [k,u,t,label] of coreDefs){
+      setSyncProgress(done,total,`${label}を取得中…`,success,failed);
+      try{
+        g[k]=t==="json"?await json(u,12000):await text(u,12000);
+        success++;
+      }catch(e){console.warn(k,e);failed++}
+      done++;setSyncProgress(done,total,`${label} 完了`,success,failed);
+    }
+
+    if(!g.roster||!g.stats||!g.moves||!g.learn){
+      status([["基礎同期失敗","bad"]]);
+      log("必須データの取得に失敗しました。通信状態を確認して再試行してください。");
+      setSyncProgress(done,total,"基礎同期失敗",success,failed);
+      return;
+    }
+
+    for(const [k,u,t,label] of legalDefs){
+      setSyncProgress(done,total,`${label}を取得中…`,success,failed);
+      try{g[k]=await text(u,12000);success++}
+      catch(e){console.warn(k,e);failed++}
+      done++;setSyncProgress(done,total,`${label} 完了`,success,failed);
+    }
+
+    setSyncProgress(done,total,"ロスターを解析中…",success,failed);
+    const statsMap={};
+    if(Array.isArray(g.stats)){
+      g.stats.forEach(x=>{if(x?.name){statsMap[id(x.name)]=x;statsMap[x.name]=x}});
+    }else Object.assign(statsMap,g.stats||{});
+
+    let roster;
+    if(g.dex&&g.champLearn){
+      try{
+        const dex=parseDex(g.dex),legal=legalKeys(g.champLearn);
+        CHAMP_LEARN=parseChampLearnsets(g.champLearn);
+        roster=buildRoster(dex,legal,g.roster).map(p=>mergeStats(p,statsMap));
+      }catch(e){console.warn("Showdown roster parse fallback",e)}
+    }
+    if(!roster?.length){
+      roster=(g.roster||[]).map(p=>{
+        const st=statsMap[id(p.name)]||statsMap[p.name]||{};
+        return {
+          key:id(p.name),name:p.name,base:p.name,form:p.form||"Base",dex:p.dexNumber||0,
+          types:p.types||[],abilities:Object.values(p.abilities||{}).filter(Boolean),
+          stats:[+st.hp||80,+st.atk||80,+st.def||80,+st.spa||80,+st.spd||80,+st.spe||80],
+          jpName:p.japaneseName||p.jpName||p.nameJa||p.name_ja||null,
+          legalBase:id(p.name)
+        };
+      });
+    }
+
+    DATA=roster;MOVES=g.moves||{};LEARN=g.learn||{};ABILITIES=g.abilities||{};ITEMS=g.items||{};
+    TEAM.mine.fill(null);TEAM.enemy.fill(null);
+    renderSlots("mine");renderSlots("enemy");renderBuildEditor();
+
+    for(const [k,u,t,label] of optionalDefs){
+      setSyncProgress(done,total,`${label}を取得中…`,success,failed);
+      try{
+        g[k]=t==="json"?await json(u,8000):await text(u,8000);
+        success++;
+      }catch(e){console.warn(k,e);failed++}
+      done++;setSyncProgress(done,total,`${label} 完了`,success,failed);
+    }
+
+    setSyncProgress(done,total,"日本語辞書・使用率を解析中…",success,failed);
+    try{
+      JA_MOVES=(g.pokeMoves&&g.pokeMoveNames)?mapJapaneseNames(g.pokeMoves,g.pokeMoveNames,"move_id"):(JA_MOVES||{});
+      JA_ABILITIES=(g.pokeAbilities&&g.pokeAbilityNames)?mapJapaneseNames(g.pokeAbilities,g.pokeAbilityNames,"ability_id"):(JA_ABILITIES||{});
+      JA_ITEMS=(g.pokeItems&&g.pokeItemNames)?mapJapaneseNames(g.pokeItems,g.pokeItemNames,"item_id"):(JA_ITEMS||{});
+      if(typeof mapJapaneseSpecies==="function"){
+        JA_SPECIES=(g.pokeSpecies&&g.pokeSpeciesNames)?mapJapaneseSpecies(g.pokeSpecies,g.pokeSpeciesNames):(JA_SPECIES||{});
+      }
+    }catch(e){console.warn("Japanese map fallback",e)}
+
+    const ms=metaMap(g.singles),md=metaMap(g.doubles);
+    META={s:ms,d:md};
+    DATA.forEach(p=>{
+      p.usageS=ms[id(p.name)]?.usage||0;p.usageD=md[id(p.name)]?.usage||0;
+      p.rankS=ms[id(p.name)]?.rank||999;p.rankD=md[id(p.name)]?.rank||999;
+    });
+    done++;setSyncProgress(done,total,"解析完了",success,failed);
+
+    setSyncProgress(done,total,"端末へ保存中…",success,failed);
+    localStorage.setItem("pc_complete_v751",JSON.stringify({
+      DATA,MOVES,LEARN,CHAMP_LEARN,ABILITIES,ITEMS,NATURES:g.natures||NATURES||{},
+      META,JA_MOVES,JA_ABILITIES,JA_ITEMS,
+      JA_SPECIES:typeof JA_SPECIES!=="undefined"?JA_SPECIES:{},ts:Date.now()
+    }));
+    done++;setSyncProgress(done,total,"同期完了",success,failed);
+
+    renderSlots("mine");renderSlots("enemy");renderBuildEditor();renderSavedTeams();
+    const complete=DATA.length>=319;
+    status([
+      [`ロスター ${DATA.length}形態`,complete?"ok":"warn"],
+      [`技 ${Array.isArray(MOVES)?MOVES.length:Object.keys(MOVES).length}`,"ok"],
+      [`特性 ${Array.isArray(ABILITIES)?ABILITIES.length:Object.keys(ABILITIES).length}`,"ok"],
+      [`持ち物 ${Array.isArray(ITEMS)?ITEMS.length:Object.keys(ITEMS).length}`,"ok"],
+      [failed?`失敗/スキップ ${failed}件`:"全取得成功",failed?"warn":"ok"]
+    ]);
+    q("counts").textContent=`ロスター ${DATA.length}形態｜技 ${Array.isArray(MOVES)?MOVES.length:Object.keys(MOVES).length}｜特性 ${Array.isArray(ABILITIES)?ABILITIES.length:Object.keys(ABILITIES).length}｜持ち物 ${Array.isArray(ITEMS)?ITEMS.length:Object.keys(ITEMS).length}`;
+    log(failed?`同期完了。${failed}件はスキップしましたが、必須データは利用できます。`:"同期完了。すべてのデータ取得が終了しました。");
+    toast("同期が完了しました");
+  }finally{
+    q("syncBtn").disabled=false;
+  }
+}
+function loadCache(){
+  try{
+    const raw=localStorage.getItem("pc_complete_v751")||localStorage.getItem("pc_complete_v74")||localStorage.getItem("pc_complete_v73");
+    const x=JSON.parse(raw||"null");
+    if(!x?.DATA?.length)return false;
+    DATA=x.DATA;MOVES=x.MOVES||{};LEARN=x.LEARN||{};CHAMP_LEARN=x.CHAMP_LEARN||{};
+    ABILITIES=x.ABILITIES||{};ITEMS=x.ITEMS||{};NATURES=x.NATURES||{};META=x.META||{s:{},d:{}};
+    JA_MOVES=x.JA_MOVES||{};JA_ABILITIES=x.JA_ABILITIES||{};JA_ITEMS=x.JA_ITEMS||{};
+    if(typeof JA_SPECIES!=="undefined")JA_SPECIES=x.JA_SPECIES||{};
+    const ok=DATA.length>=319;
+    status([[`キャッシュ ${DATA.length}形態`,ok?"ok":"warn"],["起動済み","ok"]]);
+    return true;
+  }catch(e){console.warn(e);return false}
+}
+function renderSlots(team){q(team).innerHTML=Array.from({length:6},(_,i)=>{let idx=TEAM[team][i],p=Number.isInteger(idx)?DATA[idx]:null;return `<button class="poke-slot" type="button" data-team="${team}" data-slot="${i}"><span class="slot-no">${i+1}</span>${p?image(p):`<div style="height:74px;display:grid;place-items:center;font-size:32px;color:var(--muted)">＋</div>`}<span class="poke-name">${p?nameJP(p):"画像で選択"}</span></button>`}).join("");q(team).querySelectorAll(".poke-slot").forEach(b=>b.addEventListener("click",()=>openSelector(b.dataset.team,+b.dataset.slot)))}
+function openSelector(team,slot){
+  TARGET={team,slot};
+  q("search").value="";
+  const enemy=team==="enemy";
+  q("enemyFilters").classList.toggle("hidden-filter",!enemy);
+  if(enemy){q("typeFilter1").value="";q("typeFilter2").value=""}
+  q("selector").classList.add("open");
+  q("selector").setAttribute("aria-hidden","false");
+  renderGrid("");
+  setTimeout(()=>q("search").focus(),50);
+}
+function closeSelector(){q("selector").classList.remove("open");q("selector").setAttribute("aria-hidden","true")}
+function renderGrid(term){
+  const t=(term||"").toLowerCase().trim(), sel=TEAM[TARGET.team]?.[TARGET.slot];
+  const f1=TARGET.team==="enemy"?q("typeFilter1").value:"";
+  const f2=TARGET.team==="enemy"?q("typeFilter2").value:"";
+  let arr=DATA.map((p,i)=>({p,i}))
+    .filter(({p})=>TARGET.team!=="enemy" || !isMega(p))
+    .filter(({p})=>!t||`${nameJP(p)} ${p.name}`.toLowerCase().includes(t))
+    .filter(({p})=>!f1||p.types.includes(f1))
+    .filter(({p})=>!f2||p.types.includes(f2));
+
+  if(TARGET.team==="enemy"){
+    arr.sort((a,b)=>{
+      const A=gamewithTierInfo(a.p),B=gamewithTierInfo(b.p);
+      const at=A.tier||99,bt=B.tier||99;
+      if(at!==bt)return at-bt;
+      if(A.order!==B.order)return A.order-B.order;
+      return nameJP(a.p).localeCompare(nameJP(b.p),"ja");
+    });
+  }else{
+    arr.sort((a,b)=>(MODE==="s"?a.p.rankS:a.p.rankD)-(MODE==="s"?b.p.rankS:b.p.rankD)||nameJP(a.p).localeCompare(nameJP(b.p),"ja"));
+  }
+
+  arr=arr.slice(0,400);
+  q("selectorMeta").textContent=TARGET.team==="enemy"
+    ? `${arr.length}件表示｜GameWith Tier順・メガ除外${f1||f2?"・タイプ絞込中":""}`
+    : `${arr.length}件表示 / 全${DATA.length}形態`;
+
+  q("pokeGrid").innerHTML=arr.map(({p,i})=>{
+    const ti=TARGET.team==="enemy"?gamewithTierInfo(p):{tier:0};
+    const tierText=TARGET.team==="enemy"?(ti.tier?`Tier ${ti.tier}`:"未評価"):"";
+    return `<button class="poke-card ${i===sel?"selected":""}" type="button" data-index="${i}">
+      ${image(p)}
+      <b>${nameJP(p)}</b>
+      <small>${p.types.map(x=>TYPEJP[x]||x).join(" / ")}</small>
+      ${TARGET.team==="enemy"?`<span class="tier-badge tier${ti.tier}">${tierText}</span>`:""}
+    </button>`;
+  }).join("");
+  q("pokeGrid").querySelectorAll(".poke-card").forEach(b=>b.addEventListener("click",()=>choose(+b.dataset.index)));
+}
+function choose(i){
+  let p=DATA[i];
+  if(TARGET.team==="enemy" && isMega(p)){toast("相手側ではメガ形態は選択できません");return}
+  let a=TEAM[TARGET.team];
+  if(a.some((x,j)=>j!==TARGET.slot&&x===i)){toast("同じ形態はすでに選択されています");return}
+  a[TARGET.slot]=i;if(TARGET.team==="mine"){CUSTOM_BUILDS.mine[TARGET.slot]=null;renderBuildEditor();}renderSlots(TARGET.team);closeSelector();
+}
+function chosen(team){return TEAM[team].filter(Number.isInteger).map(i=>DATA[i]).filter(Boolean)}
+function setMode(m){MODE=m;q("singleBtn").classList.toggle("active",m==="s");q("doubleBtn").classList.toggle("active",m==="d")}
+
+function initTypeFilters(){
+  const opts=TYPES.map(t=>`<option value="${t}">${TYPEJP[t]||t}</option>`).join("");
+  q("typeFilter1").innerHTML='<option value="">すべて</option>'+opts;
+  q("typeFilter2").innerHTML='<option value="">指定なし</option>'+opts;
+}
+
+function allMoveEntries(){
+  return Object.entries(MOVES||{}).map(([k,v])=>{
+    if(typeof v==="string")return {key:k,name:v,id:k};
+    return {key:k,...(v||{}),name:(v||{}).name||k,id:(v||{}).id||k};
+  });
+}
+function findMove(n){
+  if(!n)return null;
+  const wanted=id(typeof n==="string"?n:(n.name||n.id||""));
+  let direct=MOVES[n]||MOVES[wanted];
+  if(direct){
+    if(typeof direct==="string")return {id:wanted,name:direct,power:0,category:"Status"};
+    return {id:wanted,...direct,name:direct.name||n};
+  }
+  const ent=allMoveEntries().find(x=>id(x.key)===wanted||id(x.name)===wanted||id(x.id)===wanted);
+  return ent||null;
+}
+function publicLearnNames(p){
+  const keys=[p.name,id(p.name),p.base,id(p.base),p.legalBase].filter(Boolean);
+  for(const k of keys){
+    const ls=LEARN[k];
+    if(!ls)continue;
+    if(Array.isArray(ls))return ls.map(x=>typeof x==="string"?x:(x.move||x.name||x.id)).filter(Boolean);
+    if(typeof ls==="object"){
+      const obj=ls.learnset||ls.moves||ls;
+      if(Array.isArray(obj))return obj.map(x=>typeof x==="string"?x:(x.move||x.name||x.id)).filter(Boolean);
+      return Object.keys(obj);
+    }
+  }
+  return [];
+}
+function movePool(p){
+  let names=publicLearnNames(p);
+  if(!names.length){
+    const keys=[p.key,id(p.name),p.legalBase,id(p.base)].filter(Boolean);
+    for(const k of keys)if(CHAMP_LEARN[k]?.length){names=CHAMP_LEARN[k];break}
+  }
+  let arr=names.map(findMove).filter(Boolean).filter(x=>x.inChampions!==false);
+  // Last fallback: legal STAB-ish moves from the full move data so the selector never becomes empty.
+  if(!arr.length){
+    arr=allMoveEntries().filter(m=>p.types.includes(m.type)&&(+m.power||0)>0).slice(0,30);
+  }
+  const seen=new Set();
+  return arr.filter(m=>{const k=id(m.name||m.id);if(!k||seen.has(k))return false;seen.add(k);return true});
+}
+const CUSTOM_BUILDS={mine:Array(6).fill(null)};
+function defaultSetFor(p){
+  let ms=movePool(p),
+      phys=ms.filter(m=>/physical/i.test(m.category||"")&&+m.power>0).sort((a,b)=>+b.power-+a.power),
+      spec=ms.filter(m=>/special/i.test(m.category||"")&&+m.power>0).sort((a,b)=>+b.power-+a.power),
+      atk=p.stats[1]>=p.stats[3],
+      moves=(atk?phys:spec).slice(0,2).concat((atk?spec:phys).slice(0,1));
+  if(!moves.length)moves=p.types.map(t=>({name:(TYPEJP[t]||t)+"一致技",type:t,power:90,category:atk?"Physical":"Special"}));
+  return {moves:moves.slice(0,4),pts:atk?[2,32,0,0,0,32]:[2,0,0,32,0,32],item:atk?"こだわりハチマキ":"こだわりメガネ",ability:"自動"};
+}
+function findMineSlot(p){
+  return TEAM.mine.findIndex(i=>Number.isInteger(i)&&DATA[i]===p);
+}
+function moveByName(n){return findMove(n)}
+function setFor(p){
+  const slot=findMineSlot(p);
+  if(slot>=0 && CUSTOM_BUILDS.mine[slot]){
+    const b=CUSTOM_BUILDS.mine[slot];
+    const moves=(b.moves||[]).map(moveByName).filter(Boolean);
+    return {moves:moves.length?moves:defaultSetFor(p).moves,pts:b.pts||defaultSetFor(p).pts,item:b.item||defaultSetFor(p).item,ability:b.ability||"自動"};
+  }
+  return defaultSetFor(p);
+}
+function moveScore(a,e,s,m){let typ=m.type||a.types[0],pow=+m.power||80,cat=(m.category||"Physical").toLowerCase(),ai=cat.includes("special")?3:1,di=cat.includes("special")?4:2,atk=a.stats[ai]+s.pts[ai],def=e.stats[di]+20,x=pow*atk/Math.max(1,def)*(a.types.includes(typ)?1.5:1)*eff(typ,e.types);let w=q("weather").value;if(w==="sun"&&typ==="Fire")x*=1.5;if(w==="rain"&&typ==="Water")x*=1.5;return x}
+function match(a,e){let s=setFor(a),es=setFor(e),out=0,mn="";for(const m of s.moves){let x=moveScore(a,e,s,m);if(x>out){out=x;mn=moveJP(m.name||m.type)}}let inc=0;for(const m of es.moves)inc=Math.max(inc,moveScore(e,a,es,m));return {out,inc,fast:a.stats[5]+s.pts[5]>e.stats[5]+es.pts[5],move:mn}}
+function comp(team){let c={},v=0;for(const p of team)for(const t of TYPES)if(eff(t,p.types)>1)c[t]=(c[t]||0)+1;for(const n of Object.values(c))v+=n===1?2:n===2?1:n>=3?-3:0;return v}
+function evalTeam(team,en){let off=0,def=0,fast=0,cov=0,worst=0;for(const a of team)for(const e of en){let m=match(a,e);off+=m.out;def-=m.inc*.4;if(m.fast)fast++;cov+=Math.max(...a.types.map(t=>eff(t,e.types)));worst+=Math.min(0,m.out-m.inc)}let co=comp(team),meta=team.reduce((z,p)=>z+(MODE==="s"?p.usageS:p.usageD||0),0),score=off*.7+def*.2+fast*7+cov*8+co*8+meta*150*+q("metaWeight").value;let st=q("style").value;if(st==="safe")score+=co*12+worst*.6;if(st==="off")score+=off*.5;if(st==="speed")score+=fast*12;if(st==="cycle")score+=co*9;if(st==="double"&&MODE==="d")score+=fast*4;let risk=q("risk").value;if(risk==="worst")score+=worst*.8;if(risk==="mix")score+=worst*.35;return {score,off,fast,cov,co,meta,worst}}
+function combos(a,k){let o=[];function r(i,x){if(x.length===k){o.push(x);return}for(let j=i;j<=a.length-(k-x.length);j++)r(j+1,x.concat(a[j]))}r(0,[]);return o}
+function isMega(p){return /mega/i.test(p.form||"")||/mega/i.test(p.name||"")}
+function lead(team,en){let z=[];for(let i=0;i<team.length;i++)for(let j=i+1;j<team.length;j++){let v=0;for(const e of en)v+=match(team[i],e).out+match(team[j],e).out*.8;z.push([team[i],team[j],v])}return z.sort((a,b)=>b[2]-a[2])[0]}
+function judge(){let me=chosen("mine"),en=chosen("enemy");if(me.length!==6||en.length!==6){toast("自分と相手を6体ずつ選択してください");return}if(!validateCustomBuilds())return;let k=MODE==="s"?3:4,rs=combos(me,k).filter(t=>t.filter(isMega).length<=1).map(t=>({t,e:evalTeam(t,en)})).sort((a,b)=>b.e.score-a.e.score);if(!rs.length){toast("メガ形態の選択条件を確認してください");return}let best=rs[0];q("result").classList.remove("hidden");q("head").innerHTML=`<div class="score">${Math.round(best.e.score)}点</div><div class="small">推奨${k}体｜メガシンカは選出内1体まで</div>`;q("ranking").innerHTML=rs.slice(0,8).map((r,i)=>{let l=MODE==="d"?lead(r.t,en):null;return `<div class="r"><div class="rh"><div class="rn">${i+1}位｜${r.t.map(nameJP).join(" / ")}</div><div class="rs">${Math.round(r.e.score)}</div></div><div class="bar"><i style="width:${Math.max(5,Math.min(100,r.e.score/best.e.score*100))}%"></i></div><div class="small">火力 ${r.e.off.toFixed(0)}｜上から ${r.e.fast}対面｜補完 ${r.e.co}｜攻撃範囲 ${r.e.cov.toFixed(1)}</div>${l?`<div class="notice">先発推奨：<b>${nameJP(l[0])} + ${nameJP(l[1])}</b></div>`:""}</div>`}).join("");q("analysis").innerHTML=`<div class="notice"><b class="ok">勝ち筋</b><br>相手6体への最大打点・素早さ・弱点補完・環境採用率を同時に評価しています。</div><div class="notice"><b class="bad">警戒</b><br>型不明の相手は技プールから高威力候補を生成して評価します。持ち物・特性固有効果の全例外処理はデータ更新に追従します。</div>`;q("pred").innerHTML=en.map(p=>{let s=setFor(p);return `<div class="r"><b>${nameJP(p)}</b><div class="small">${itemJP(s.item)}｜SP ${s.pts.join("-")}｜候補 ${s.moves.map(x=>moveJP(x.name||x.type)).join(" / ")}</div></div>`}).join("");q("matrix").innerHTML=matrix(best.t,en);q("result").scrollIntoView({behavior:"smooth"})}
+function matrix(team,en){let h="<table><tr><th>自分＼相手</th>"+en.map(x=>`<th>${nameJP(x)}</th>`).join("")+"</tr>";for(const a of team){h+=`<tr><th>${nameJP(a)}</th>`;for(const e of en){let m=match(a,e),x=m.out/(m.inc||1);h+=`<td class="${x>=1.4?"ok":x<.75?"bad":"warn"}">${m.move||"—"}<br>${x.toFixed(2)}</td>`}h+="</tr>"}return h+"</table>"}
+function reset(){TEAM.mine.fill(null);TEAM.enemy.fill(null);CUSTOM_BUILDS.mine=Array(6).fill(null);renderSlots("mine");renderSlots("enemy");renderBuildEditor();q("result").classList.add("hidden")}
+
+
+function itemOptions(){
+  const vals=[];
+  for(const [k,v] of Object.entries(ITEMS||{})){
+    if(typeof v==="string")vals.push(v);
+    else vals.push(v?.name||v?.displayName||k);
+  }
+  return [...new Set(vals.filter(Boolean))].sort((a,b)=>itemJP(a).localeCompare(itemJP(b),"ja"));
+}
+function allAbilityNames(){
+  const vals=[];
+  for(const [k,v] of Object.entries(ABILITIES||{})){
+    if(typeof v==="string")vals.push(v);
+    else vals.push(v?.name||v?.displayName||k);
+  }
+  return [...new Set(vals.filter(Boolean))];
+}
+function abilityOptions(p){
+  let arr=(p?.abilities||[]).map(x=>typeof x==="string"?x:(x?.name||x?.ability)).filter(Boolean);
+  if(!arr.length){
+    // Fallback keeps the field usable, but indicates all-data fallback rather than pretending legality is known.
+    arr=allAbilityNames();
+  }
+  return [...new Set(arr)].sort((a,b)=>abilityJP(a).localeCompare(abilityJP(b),"ja"));
+}
+function moveOptions(p){
+  const vals=movePool(p).map(m=>m.name||m.displayName||m.id).filter(Boolean);
+  return [...new Set(vals)].sort((a,b)=>moveJP(a).localeCompare(moveJP(b),"ja"));
+}
+function normalizeBuild(slot,p){
+  if(!CUSTOM_BUILDS.mine[slot]){
+    const d=defaultSetFor(p);
+    CUSTOM_BUILDS.mine[slot]={pts:[...d.pts],moves:d.moves.map(x=>x.name||"").filter(Boolean).slice(0,4),item:d.item,ability:(p.abilities||[])[0]||"自動"};
+  }
+  while(CUSTOM_BUILDS.mine[slot].moves.length<4)CUSTOM_BUILDS.mine[slot].moves.push("");
+}
+function renderBuildEditor(){
+  const root=q("buildEditor");
+  root.innerHTML="";
+  TEAM.mine.forEach((idx,slot)=>{
+    if(!Number.isInteger(idx)||!DATA[idx])return;
+    const p=DATA[idx]; normalizeBuild(slot,p);
+    const b=CUSTOM_BUILDS.mine[slot], moves=moveOptions(p), items=itemOptions(), abs=abilityOptions(p), legalAbs=(p.abilities||[]).length>0;
+    const card=document.createElement("div");card.className="build-card";
+    card.innerHTML=`<h3>${slot+1}. ${nameJP(p)}</h3>
+      <div class="sp-row">
+        ${["HP","攻撃","防御","特攻","特防","素早さ"].map((n,i)=>`<label>${n}<input data-kind="sp" data-slot="${slot}" data-i="${i}" type="number" min="0" max="32" value="${b.pts[i]||0}"></label>`).join("")}
+      </div>
+      <div class="sp-total" id="spTotal${slot}"></div>
+      <div class="build-grid" style="margin-top:8px">
+        <label>特性<select data-kind="ability" data-slot="${slot}"><option value="自動">自動</option>${abs.map(x=>`<option value="${x}" ${x===b.ability?"selected":""}>${abilityJP(x)}</option>`).join("")}</select><span class="small">${legalAbs?"このポケモンの候補":"全特性から表示"}</span></label>
+        <label>持ち物<select data-kind="item" data-slot="${slot}"><option value="">自動</option>${items.map(x=>`<option value="${x}" ${x===b.item?"selected":""}>${itemJP(x)}</option>`).join("")}</select></label>
+        ${[0,1,2,3].map(i=>`<label>技${i+1}<select data-kind="move" data-slot="${slot}" data-i="${i}"><option value="">自動</option>${moves.map(x=>`<option value="${x}" ${x===b.moves[i]?"selected":""}>${moveJP(x)}</option>`).join("")}</select></label>`).join("")}
+      </div>`;
+    root.appendChild(card);
+  });
+  root.querySelectorAll("[data-kind]").forEach(el=>el.addEventListener("change",updateBuildField));
+  TEAM.mine.forEach((idx,slot)=>{if(Number.isInteger(idx))updateSPTotal(slot)});
+  if(!root.children.length)root.innerHTML='<div class="small">自分のポケモンを選択すると、ここに実戦データ入力欄が表示されます。</div>';
+}
+function updateSPTotal(slot){
+  const b=CUSTOM_BUILDS.mine[slot]; if(!b)return;
+  let total=b.pts.reduce((a,x)=>a+(+x||0),0);
+  const el=q("spTotal"+slot); if(!el)return;
+  el.textContent=`SP合計 ${total} / 66`;
+  el.className="sp-total "+(total===66?"ok":total>66?"bad":"warn");
+}
+function updateBuildField(e){
+  const el=e.currentTarget,slot=+el.dataset.slot,kind=el.dataset.kind,b=CUSTOM_BUILDS.mine[slot]; if(!b)return;
+  if(kind==="sp"){
+    const i=+el.dataset.i; let v=Math.max(0,Math.min(32,+el.value||0)); el.value=v; b.pts[i]=v;
+    let total=b.pts.reduce((a,x)=>a+(+x||0),0);
+    if(total>66){toast("SP合計は66までです");}
+    updateSPTotal(slot);
+  }else if(kind==="ability")b.ability=el.value;
+  else if(kind==="item")b.item=el.value;
+  else if(kind==="move")b.moves[+el.dataset.i]=el.value;
+}
+function validateCustomBuilds(){
+  for(let i=0;i<6;i++){
+    if(!Number.isInteger(TEAM.mine[i]))continue;
+    normalizeBuild(i,DATA[TEAM.mine[i]]);
+    const b=CUSTOM_BUILDS.mine[i],total=b.pts.reduce((a,x)=>a+(+x||0),0);
+    if(total!==66){toast(`${i+1}番目の${nameJP(DATA[TEAM.mine[i]])}のSP合計を66にしてください`);return false}
+    if(b.pts.some(x=>x<0||x>32)){toast("各SPは0〜32で入力してください");return false}
+  }
+  return true;
+}
+
+const SAVED_TEAM_KEY="pc_saved_teams_v1";
+
+function readSavedTeams(){
+  try{
+    const x=JSON.parse(localStorage.getItem(SAVED_TEAM_KEY)||"[]");
+    return Array.isArray(x)?x:[];
+  }catch(e){return []}
+}
+function writeSavedTeams(list){
+  localStorage.setItem(SAVED_TEAM_KEY,JSON.stringify(list));
+  renderSavedTeams();
+}
+function currentMinePayload(){
+  return TEAM.mine.map((idx,slot)=>{
+    if(!Number.isInteger(idx)||!DATA[idx])return null;
+    const p=DATA[idx];
+    return {name:p.name,form:p.form||"Base",key:id(p.name),dex:p.dex||0,build:CUSTOM_BUILDS.mine[slot]||null};
+  });
+}
+function resolveSavedPokemon(x){
+  if(!x)return null;
+  let idx=DATA.findIndex(p=>id(p.name)===x.key && (p.form||"Base")===(x.form||"Base"));
+  if(idx<0)idx=DATA.findIndex(p=>id(p.name)===x.key);
+  return idx>=0?idx:null;
+}
+function saveCurrentTeam(){
+  const mine=chosen("mine");
+  if(mine.length!==6){toast("自分の6体をすべて選択してください");return}
+  const name=q("teamName").value.trim();
+  if(!name){toast("チーム名を入力してください");return}
+  let list=readSavedTeams();
+  const existing=list.findIndex(x=>x.name===name);
+  const data={id:existing>=0?list[existing].id:Date.now(),name,pokemon:currentMinePayload(),updatedAt:Date.now()};
+  if(existing>=0)list[existing]=data; else list.unshift(data);
+  writeSavedTeams(list);
+  q("teamName").value="";
+  toast(existing>=0?"チームを上書き保存しました":"チームを保存しました");
+}
+function loadSavedTeam(teamId){
+  const t=readSavedTeams().find(x=>x.id===teamId);
+  if(!t)return;
+  const resolved=t.pokemon.map(resolveSavedPokemon);
+  const missing=resolved.filter(x=>x===null).length;
+  TEAM.mine=resolved.map(x=>x===null?null:x);
+  CUSTOM_BUILDS.mine=t.pokemon.map(x=>x?.build||null);
+  renderSlots("mine");renderBuildEditor();
+  if(missing)toast(`${missing}体は現在のデータで見つかりませんでした`);
+  else toast(`「${t.name}」を読み込みました`);
+}
+function overwriteSavedTeam(teamId){
+  const mine=chosen("mine");
+  if(mine.length!==6){toast("自分の6体をすべて選択してください");return}
+  let list=readSavedTeams(),i=list.findIndex(x=>x.id===teamId);
+  if(i<0)return;
+  list[i].pokemon=currentMinePayload();
+  list[i].updatedAt=Date.now();
+  writeSavedTeams(list);
+  toast(`「${list[i].name}」を上書きしました`);
+}
+function deleteSavedTeam(teamId){
+  let list=readSavedTeams(),t=list.find(x=>x.id===teamId);
+  list=list.filter(x=>x.id!==teamId);
+  writeSavedTeams(list);
+  toast(t?`「${t.name}」を削除しました`:"削除しました");
+}
+function renderSavedTeams(){
+  const list=readSavedTeams();
+  if(!list.length){
+    q("teamList").innerHTML='<div class="small">保存済みチームはまだありません。</div>';
+    return;
+  }
+  q("teamList").innerHTML=list.map(t=>`
+    <div class="team-entry">
+      <b>${t.name}</b>
+      <button type="button" data-act="load" data-id="${t.id}">呼び出す</button>
+      <button type="button" data-act="overwrite" data-id="${t.id}">上書き</button>
+      <button type="button" data-act="delete" data-id="${t.id}">削除</button>
+    </div>`).join("");
+  q("teamList").querySelectorAll("button").forEach(b=>{
+    const teamId=Number(b.dataset.id);
+    if(b.dataset.act==="load")b.addEventListener("click",()=>loadSavedTeam(teamId));
+    if(b.dataset.act==="overwrite")b.addEventListener("click",()=>overwriteSavedTeam(teamId));
+    if(b.dataset.act==="delete")b.addEventListener("click",()=>deleteSavedTeam(teamId));
+  });
+}
+
+q("syncBtn").addEventListener("click",sync);q("clearBtn").addEventListener("click",()=>{["pc_complete_v751","pc_complete_v74","pc_complete_v73","pc_complete_v72","pc_complete_v71"].forEach(k=>localStorage.removeItem(k));toast("キャッシュを削除しました")});q("singleBtn").addEventListener("click",()=>setMode("s"));q("doubleBtn").addEventListener("click",()=>setMode("d"));q("judgeBtn").addEventListener("click",judge);q("resetBtn").addEventListener("click",reset);q("saveTeamBtn").addEventListener("click",saveCurrentTeam);q("closeSelector").addEventListener("click",closeSelector);q("search").addEventListener("input",e=>renderGrid(e.target.value));q("typeFilter1").addEventListener("change",()=>renderGrid(q("search").value));q("typeFilter2").addEventListener("change",()=>renderGrid(q("search").value));q("selector").addEventListener("click",e=>{if(e.target===q("selector"))closeSelector()});
+initTypeFilters();resetSyncProgress();if(!loadCache()){status([["未同期","warn"],["完全同期を実行してください",""]])}renderSlots("mine");renderSlots("enemy");renderBuildEditor();renderSavedTeams();
+</script>
+<script>
+(function(){
+  if("serviceWorker" in navigator){
+    window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+  }
+})();
+</script>
+
+<script>
+(async function(){
+  const APP_BUILD="v7.5.2-cache-reset";
+  try{
+    if("caches" in window){
+      const keys=await caches.keys();
+      await Promise.all(keys.filter(k=>!k.includes("v7-5-2")).map(k=>caches.delete(k)));
+    }
+    if("serviceWorker" in navigator){
+      const regs=await navigator.serviceWorker.getRegistrations();
+      for(const reg of regs){
+        try{ await reg.update(); }catch(e){}
+      }
+      try{
+        await navigator.serviceWorker.register("./sw.js?v=752",{updateViaCache:"none"});
+      }catch(e){console.warn(e)}
+    }
+    localStorage.setItem("pc_app_build",APP_BUILD);
+  }catch(e){console.warn("cache reset",e)}
+})();
+</script>
+
+</body></html>
